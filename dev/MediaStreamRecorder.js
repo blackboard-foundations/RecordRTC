@@ -147,6 +147,10 @@ function MediaStreamRecorder(mediaStream, config) {
         // Dispatching OnDataAvailable Handler
         mediaRecorder.ondataavailable = function(e) {
             if (e.data) {
+                if (!e.data.size) {
+                    console.warn('Safari zero blob size workaround activated');
+                    return;
+                }
                 allStates.push('ondataavailable: ' + bytesToSize(e.data.size));
             }
 
