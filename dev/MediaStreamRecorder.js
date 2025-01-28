@@ -162,7 +162,7 @@ function MediaStreamRecorder(mediaStream, config) {
                     if (typeof config.ondataavailable === 'function') {
                         // intervals based blobs
                         var blob = config.getNativeBlob ? e.data : new Blob([e.data], {
-                            type: getMimeType(recorderHints)
+                            type: ensureQuotes(getMimeType(recorderHints))
                         });
                         config.ondataavailable(blob);
                     }
@@ -175,7 +175,7 @@ function MediaStreamRecorder(mediaStream, config) {
                 // even if there is invalid data
                 if (self.recordingCallback) {
                     self.recordingCallback(new Blob([], {
-                        type: getMimeType(recorderHints)
+                        type: ensureQuotes(getMimeType(recorderHints))
                     }));
                     self.recordingCallback = null;
                 }
@@ -183,7 +183,7 @@ function MediaStreamRecorder(mediaStream, config) {
             }
 
             self.blob = config.getNativeBlob ? e.data : new Blob([e.data], {
-                type: getMimeType(recorderHints)
+                type: ensureQuotes(getMimeType(recorderHints))
             });
 
             if (self.recordingCallback) {
@@ -297,6 +297,13 @@ function MediaStreamRecorder(mediaStream, config) {
         }
 
         return secondObject.mimeType || 'video/webm';
+    }
+
+    function ensureQuotes(mimetype) {
+        if (mimetype.indexOf(';') !== -1 && mimetype.indexOf('=') !== -1 && mimetype.indexOf('"') === -1) {
+            return mimetype.split('=')[0] + '="' + mimetype.split('=')[1] + '"';
+        }
+        return mimetype;
     }
 
     /**

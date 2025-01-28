@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2025-01-27 9:06:54 AM UTC
+// Last time updated: 2025-01-28 1:37:16 PM UTC
 
 // ________________
-// RecordRTC v5.6.3-patch.2
+// RecordRTC v5.6.3-patch.4
 
 // Open-Sourced: https://github.com/muaz-khan/RecordRTC
 
@@ -781,7 +781,7 @@ function RecordRTC(mediaStream, config) {
          * @example
          * alert(recorder.version);
          */
-        version: '5.6.3-patch.2'
+        version: '5.6.3-patch.4'
     };
 
     if (!this) {
@@ -799,7 +799,7 @@ function RecordRTC(mediaStream, config) {
     return returnObject;
 }
 
-RecordRTC.version = '5.6.3-patch.2';
+RecordRTC.version = '5.6.3-patch.4';
 
 if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
     module.exports = RecordRTC;
@@ -2163,7 +2163,7 @@ function MediaStreamRecorder(mediaStream, config) {
                     if (typeof config.ondataavailable === 'function') {
                         // intervals based blobs
                         var blob = config.getNativeBlob ? e.data : new Blob([e.data], {
-                            type: getMimeType(recorderHints)
+                            type: ensureQuotes(getMimeType(recorderHints))
                         });
                         config.ondataavailable(blob);
                     }
@@ -2176,7 +2176,7 @@ function MediaStreamRecorder(mediaStream, config) {
                 // even if there is invalid data
                 if (self.recordingCallback) {
                     self.recordingCallback(new Blob([], {
-                        type: getMimeType(recorderHints)
+                        type: ensureQuotes(getMimeType(recorderHints))
                     }));
                     self.recordingCallback = null;
                 }
@@ -2184,7 +2184,7 @@ function MediaStreamRecorder(mediaStream, config) {
             }
 
             self.blob = config.getNativeBlob ? e.data : new Blob([e.data], {
-                type: getMimeType(recorderHints)
+                type: ensureQuotes(getMimeType(recorderHints))
             });
 
             if (self.recordingCallback) {
@@ -2298,6 +2298,13 @@ function MediaStreamRecorder(mediaStream, config) {
         }
 
         return secondObject.mimeType || 'video/webm';
+    }
+
+    function ensureQuotes(mimetype) {
+        if (mimetype.indexOf(';') !== -1 && mimetype.indexOf('=') !== -1 && mimetype.indexOf('"') === -1) {
+            return mimetype.split('=')[0] + '="' + mimetype.split('=')[1] + '"';
+        }
+        return mimetype;
     }
 
     /**
@@ -5929,7 +5936,7 @@ function RecordRTCPromisesHandler(mediaStream, options) {
      * @example
      * alert(recorder.version);
      */
-    this.version = '5.6.3-patch.2';
+    this.version = '5.6.3-patch.4';
 }
 
 if (typeof RecordRTC !== 'undefined') {
